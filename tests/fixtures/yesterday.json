@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "title": "Niger explores uranium deal with Rosatom",
+      "summary": "Talks open between Niger military council and Rosatom over uranium exports.",
+      "url": "https://example.com/rosatom",
+      "publishedAt": "2025-11-11T10:00:00Z"
+    },
+    {
+      "title": "France issues advisory on Mali travel",
+      "summary": "French MFA urges caution on Mali trips amid security concerns.",
+      "url": "https://example.com/mali-advisory",
+      "publishedAt": "2025-11-11T12:00:00Z"
+    }
+  ]
+}

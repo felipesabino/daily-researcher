@@ -1,0 +1,32 @@
+{
+  "topics": [
+    {
+      "id": "france-africa",
+      "destinationEmail": "you@example.com",
+      "researchPrompt": "Research the key political developments in the past 24 hours that may influence the relationship between African nations and France. Focus on diplomatic actions, policy changes, international agreements, elections, military operations, economic cooperation, public opinion shifts, or notable statements from political leaders. Identify emerging alliances, tensions, sanctions, protests, or negotiations that could reshape ties. Summarize the most significant events and explain short- and long-term impacts.",
+      "queries": [
+        {
+          "name": "Diplomacy & Policy",
+          "query": "(France OR French) AND (Africa OR African OR Mali OR Niger OR Burkina Faso OR Chad OR Senegal OR Gabon OR Congo OR Morocco OR Algeria OR Tunisia OR Ethiopia) AND (diplomacy OR summit OR cooperation OR agreement OR embassy OR ambassador OR sanctions OR 'foreign policy')",
+          "lang": ["en", "fr"],
+          "category": ["Politics", "World"],
+          "pageSize": 50
+        },
+        {
+          "name": "Military & Security",
+          "query": "(France OR French) AND (Mali OR Niger OR Burkina Faso OR Chad) AND (Sahel OR 'military cooperation' OR 'troop withdrawal' OR 'security pact' OR 'counterterrorism' OR Wagner OR Barkhane)",
+          "lang": ["en", "fr"],
+          "category": ["Politics", "World"],
+          "pageSize": 50
+        },
+        {
+          "name": "Economic & Energy",
+          "query": "(France OR French) AND (Africa OR African OR Niger OR Gabon OR Congo OR Senegal) AND (uranium OR Orano OR TotalEnergies OR investment OR 'trade deal' OR oil OR gas OR infrastructure OR 'development aid')",
+          "lang": ["en", "fr"],
+          "category": ["Business", "World"],
+          "pageSize": 50
+        }
+      ]
+    }
+  ]
+}

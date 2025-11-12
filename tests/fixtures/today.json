@@ -1,0 +1,16 @@
+{
+  "items": [
+    {
+      "title": "Niger advances talks on uranium with Rosatom",
+      "summary": "Expanded framework discussions between Niger and Rosatom covering pricing and logistics.",
+      "url": "https://example.com/rosatom",
+      "publishedAt": "2025-11-12T11:00:00Z"
+    },
+    {
+      "title": "AU, France coordinate messaging on Sahel",
+      "summary": "Joint statements prepared ahead of summit to address Sahel juntas and security realignment.",
+      "url": "https://example.com/au-france",
+      "publishedAt": "2025-11-12T09:00:00Z"
+    }
+  ]
+}
