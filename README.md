@@ -69,7 +69,7 @@ node cli.js --topics ./config/topics.json --data-dir ./data --days 1
    - Normalize, dedupe by URL/title, sort by recency, and trim to `max-items`.
    - Load the scoring policy (`global` merged with topic-specific overrides, plus any runtime overrides) and compute per-article signal scores.
    - Filter/sort the articles based on the scoring thresholds, keep the top-K signals, and send them (ordered by score) to OpenAI (`gpt-4o-mini` default) for a Markdown brief.
-   - Persist the full scored list (plus which items were selected) under `./data/YYYY-MM-DD/{topicId}.json`, save the rendered Markdown brief as `./data/YYYY-MM-DD/{topicId}.md`, and generate `./dist/YYYY-MM-DD/index.html` – a static newspaper-style page with toggles for prompts/sources (unless `--no-archive`).
+   - Persist the full scored list (plus which items were selected) under `./data/{topicId}.json`, save the rendered Markdown brief as `./data/{topicId}.md`, and generate `./dist/index.html` – a static newspaper-style page with toggles for prompts/sources (unless `--no-archive`).
 
 ### Topic-aware scoring config
 

@@ -3,7 +3,7 @@ import fs from 'fs/promises';
 
 export async function saveToday({ dataDir, topicId, todayISO, items, selectedItems, brief }) {
   const dateISO = todayISO || new Date().toISOString().slice(0, 10);
-  const dir = path.resolve(dataDir, dateISO);
+  const dir = path.resolve(dataDir);
   const jsonPath = path.join(dir, `${topicId}.json`);
   const markdownPath = path.join(dir, `${topicId}.md`);
   await fs.mkdir(dir, { recursive: true });

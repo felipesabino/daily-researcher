@@ -3,7 +3,7 @@ import path from 'path';
 import { marked } from 'marked';
 
 export async function renderHtmlReport({ distDir, dateISO, results }) {
-  const dir = path.resolve(distDir, dateISO);
+  const dir = path.resolve(distDir);
   await fs.mkdir(dir, { recursive: true });
   const filePath = path.join(dir, 'index.html');
   const html = buildHtmlDocument(dateISO, results);
