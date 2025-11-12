@@ -1,7 +1,7 @@
 {
   "name": "daily-researcher",
   "version": "1.0.0",
-  "description": "CLI tool that aggregates Perigon news results, summarizes with OpenAI, and emails daily briefs.",
+  "description": "CLI tool that aggregates Perigon news results, summarizes with OpenAI, and stores daily briefs as Markdown.",
   "type": "module",
   "main": "src/index.js",
   "bin": {
@@ -23,8 +23,6 @@
   "dependencies": {
     "@goperigon/perigon-ts": "^2.2.0",
     "dotenv": "^17.2.3",
-    "marked": "^17.0.0",
-    "nodemailer": "^7.0.10",
     "openai": "^6.8.1",
     "p-limit": "^7.2.0",
     "yargs": "^17.7.2"

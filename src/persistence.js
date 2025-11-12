@@ -1,30 +1,16 @@
 import path from 'path';
 import fs from 'fs/promises';
 
-export async function loadYesterday({ dataDir, topicId, todayISO }) {
-  const todayDate = todayISO || new Date().toISOString().slice(0, 10);
-  const yesterdayISO = new Date(Date.parse(`${todayDate}T00:00:00Z`) - 24 * 60 * 60 * 1000)
-    .toISOString()
-    .slice(0, 10);
-  const file = path.resolve(dataDir, yesterdayISO, `${topicId}.json`);
-  try {
-    const raw = await fs.readFile(file, 'utf-8');
-    const json = JSON.parse(raw);
-    if (!json || !Array.isArray(json.items)) {
-      return { dateISO: yesterdayISO, items: [] };
-    }
-    return json;
-  } catch (error) {
-    return { dateISO: yesterdayISO, items: [] };
-  }
-}
-
-export async function saveToday({ dataDir, topicId, todayISO, items }) {
+export async function saveToday({ dataDir, topicId, todayISO, items, selectedItems, brief }) {
   const dateISO = todayISO || new Date().toISOString().slice(0, 10);
   const dir = path.resolve(dataDir, dateISO);
-  const file = path.join(dir, `${topicId}.json`);
+  const jsonPath = path.join(dir, `${topicId}.json`);
+  const markdownPath = path.join(dir, `${topicId}.md`);
   await fs.mkdir(dir, { recursive: true });
-  const payload = { dateISO, topicId, items };
-  await fs.writeFile(file, JSON.stringify(payload, null, 2), 'utf-8');
-  return file;
+  const payload = { dateISO, topicId, items, selectedItems };
+  await fs.writeFile(jsonPath, JSON.stringify(payload, null, 2), 'utf-8');
+  if (typeof brief === 'string') {
+    await fs.writeFile(markdownPath, brief, 'utf-8');
+  }
+  return { jsonPath, markdownPath };
 }

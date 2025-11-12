@@ -1,16 +1,12 @@
+import fs from 'fs/promises';
 import path from 'path';
 import { loadEnv, loadTopics, filterTopics, DEFAULT_TOPICS_PATH } from './config.js';
 import { fetchTopicArticles } from './perigon.js';
-import {
-  capItems,
-  computeDiff,
-  dedupeItems,
-  formatWindowLabel,
-  sortByPublishedAtDesc,
-} from './util.js';
+import { dedupeItems, formatWindowLabel, sortByPublishedAtDesc } from './util.js';
 import { createSummarizer } from './summarize.js';
-import { createMailer } from './mailer.js';
-import { loadYesterday, saveToday } from './persistence.js';
+import { saveToday } from './persistence.js';
+import { loadScoringConfig, deepMerge } from './scoring-config.js';
+import { scoreItems } from './scoring.js';
 
 export async function runDailyResearcher(options = {}) {
   loadEnv();
@@ -22,6 +18,9 @@ export async function runDailyResearcher(options = {}) {
     dryRun = false,
     maxItems = 80,
     dataDir = './data',
+    cacheDir,
+    scoringConfigPath = './config/scoring.json',
+    scoringOverridesPath,
     archive = true,
   } = options;
 
@@ -37,85 +36,122 @@ export async function runDailyResearcher(options = {}) {
 
   const perigonApiKey = process.env.PERIGON_API_KEY;
   const openAiApiKey = process.env.OPENAI_API_KEY;
-  const mailFrom = process.env.MAIL_FROM;
-  const smtpHost = process.env.SMTP_HOST;
-  const smtpPort = Number(process.env.SMTP_PORT || 587);
-  const smtpUser = process.env.SMTP_USER;
-  const smtpPass = process.env.SMTP_PASS;
-
   if (!perigonApiKey) {
     throw new Error('PERIGON_API_KEY is required.');
   }
   if (!openAiApiKey) {
     throw new Error('OPENAI_API_KEY is required.');
   }
-  if (!dryRun && (!mailFrom || !smtpHost || !smtpUser || !smtpPass)) {
-    throw new Error('SMTP credentials are missing; set them in .env or run with --dry-run for testing.');
-  }
 
   const summarizer = createSummarizer({ apiKey: openAiApiKey, model: process.env.OPENAI_MODEL });
-  const mailer = dryRun
-    ? null
-    : createMailer({
-        host: smtpHost,
-        port: smtpPort,
-        user: smtpUser,
-        pass: smtpPass,
-        from: mailFrom,
-      });
+  const scoringOverrides = await loadOverrides(scoringOverridesPath);
 
   const windowLabel = formatWindowLabel(days);
   const todayISO = new Date().toISOString().slice(0, 10);
+  const resolvedCacheDir = cacheDir || path.resolve(dataDir, '.cache', 'perigon');
 
   for (const topic of selectedTopics) {
     console.log(`\n[topic:${topic.id}] Fetching news for the ${windowLabel}...`);
-    const articles = await fetchTopicArticles(topic, { apiKey: perigonApiKey, days });
+    const articles = await fetchTopicArticles(topic, {
+      apiKey: perigonApiKey,
+      days,
+      cacheDir: resolvedCacheDir,
+    });
     let curated = dedupeItems(sortByPublishedAtDesc(articles));
-    curated = capItems(curated, maxItems);
 
     console.log(`[topic:${topic.id}] ${curated.length} curated articles.`);
 
-    const todayPayload = { dateISO: todayISO, topicId: topic.id, items: curated };
-    const yesterdayPayload = await loadYesterday({ dataDir, topicId: topic.id, todayISO });
-    const diff = computeDiff(todayPayload.items, yesterdayPayload.items);
+    const topicOverrides = resolveTopicOverrides(scoringOverrides, topic.id);
+    const scoringConfig = await loadScoringConfig(topic.id, {
+      configPath: scoringConfigPath,
+      overrides: topicOverrides,
+    });
 
+    const scoredItems = scoreItems(curated, scoringConfig);
+    let filtered = scoredItems
+      // .filter(
+      //   (item) => (item.signal?.score || 0) >= (scoringConfig.thresholds?.minScoreForInclusion ?? 0)
+      // );
+    filtered.sort((a, b) => (b.signal?.score || 0) - (a.signal?.score || 0));
+
+    if (!filtered.length) {
+      filtered = [...scoredItems].sort((a, b) => (b.signal?.score || 0) - (a.signal?.score || 0));
+    }
+
+    const topK = scoringConfig.thresholds?.topK ?? filtered.length;
+    const limit = Math.min(topK, maxItems ?? topK);
+    const topItems = filtered.slice(0, limit);
+
+    console.log(
+      `[topic:${topic.id}] Scoring complete. kept=${topItems.length} (threshold >= ${
+        scoringConfig.thresholds?.minScoreForInclusion ?? 0
+      })`
+    );
+
+    console.log(`[topic:${topic.id}] Generating brief via OpenAI...`);
     const brief = await summarizer({
       researchPrompt: topic.researchPrompt,
       windowLabel,
       topicId: topic.id,
       topicName: topic.name,
-      today: todayPayload,
-      yesterday: yesterdayPayload,
-      previousDateLabel: yesterdayPayload?.dateISO,
-      diff,
+      items: topItems,
+      metadata: {
+        topicId: topic.id,
+        topicName: topic.name,
+        scoring: {
+          thresholds: scoringConfig.thresholds,
+        },
+      },
     });
-
-    const subject = `${topic.name || topic.id} Daily – ${todayISO}`;
+    console.log(`[topic:${topic.id}] Brief ready (${brief.length} chars).`);
 
     if (dryRun) {
-      console.log(`\n[topic:${topic.id}] Dry run output (email suppressed):\n${brief}\n`);
-    } else {
-      await mailer.send({
-        to: topic.destinationEmail,
-        subject,
-        markdown: brief,
-      });
-
-      console.log(`[topic:${topic.id}] Newsletter sent to ${topic.destinationEmail}.`);
+      console.log(`\n[topic:${topic.id}] Dry run output:\n${brief}\n`);
     }
 
     if (archive) {
       try {
-        const archivePath = await saveToday({
+        const archiveInfo = await saveToday({
           dataDir,
           topicId: topic.id,
           todayISO,
-          items: todayPayload.items,
+          items: scoredItems,
+          selectedItems: topItems,
+          brief,
         });
-        console.log(`[topic:${topic.id}] Archived items to ${archivePath}`);
+        console.log(
+          `[topic:${topic.id}] Archived items to ${archiveInfo.jsonPath} and brief to ${archiveInfo.markdownPath}`
+        );
       } catch (error) {
         console.warn(`[topic:${topic.id}] Failed to archive items: ${error.message}`);
       }
     }
   }
+}
+
+async function loadOverrides(overridesPath) {
+  try {
+    if (overridesPath) {
+      const raw = await fs.readFile(path.resolve(overridesPath), 'utf-8');
+      return JSON.parse(raw);
+    }
+    if (process.env.SCORING_OVERRIDES) {
+      return JSON.parse(process.env.SCORING_OVERRIDES);
+    }
+  } catch (error) {
+    console.warn(`[scoring] Failed to load overrides: ${error.message}`);
+  }
+  return null;
+}
+
+function resolveTopicOverrides(overrides, topicId) {
+  if (!overrides) {
+    return undefined;
+  }
+  const globalOverride = overrides.global || {};
+  const topicOverride = overrides.topics?.[topicId] || overrides[topicId] || {};
+  if (!Object.keys(globalOverride).length) {
+    return Object.keys(topicOverride).length ? topicOverride : undefined;
+  }
+  return deepMerge(globalOverride, topicOverride);
 }

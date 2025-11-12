@@ -24,7 +24,7 @@ const argv = yargs(hideBin(process.argv))
   })
   .option('dry-run', {
     type: 'boolean',
-    describe: 'Skip sending email; print summary to stdout',
+    describe: 'Print the generated brief to stdout (files are still written)',
     default: false,
   })
   .option('max-items', {
@@ -37,9 +37,23 @@ const argv = yargs(hideBin(process.argv))
     describe: 'Directory used to read/write daily archives',
     default: './data',
   })
+  .option('cache-dir', {
+    type: 'string',
+    describe: 'Directory used to cache Perigon API responses',
+    default: undefined,
+  })
+  .option('scoring-config', {
+    type: 'string',
+    describe: 'Path to scoring configuration JSON',
+    default: './config/scoring.json',
+  })
+  .option('scoring-overrides', {
+    type: 'string',
+    describe: 'Path to JSON file with scoring overrides applied at runtime',
+  })
   .option('archive', {
     type: 'boolean',
-    describe: 'Persist today\'s curated items for future diffs (use --no-archive to disable)',
+    describe: 'Persist today\'s curated items and brief to disk (use --no-archive to disable)',
     default: true,
   })
   .strict()
@@ -53,6 +67,9 @@ runDailyResearcher({
   dryRun: argv.dryRun,
   maxItems: argv.maxItems,
   dataDir: argv.dataDir,
+  cacheDir: argv.cacheDir,
+  scoringConfigPath: argv.scoringConfig,
+  scoringOverridesPath: argv.scoringOverrides,
   archive: argv.archive,
 })
   .then(() => {

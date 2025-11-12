@@ -1,0 +1,89 @@
+{
+  "global": {
+    "weights": {
+      "sourceQuality": 0.2,
+      "eventfulness": 0.2,
+      "relevance": 0.2,
+      "recency": 0.15,
+      "corroboration": 0.1,
+      "officialdom": 0.1,
+      "impactHints": 0.05
+    },
+    "sourceTiers": {
+      "tier1": { "score": 1, "domains": ["reuters.com", "apnews.com", "afp.com"] },
+      "tier2": { "score": 0.75, "domains": ["bbc.com", "aljazeera.com", "dw.com", "theguardian.com", "france24.com"] },
+      "tier3": { "score": 0.55, "domains": ["allafrica.com", "theafricareport.com"] },
+      "other": { "score": 0.4 }
+    },
+    "officialDomains": [],
+    "relevance": {
+      "mustHaveAny": [],
+      "africaSet": [],
+      "themes": {},
+      "themeBoost": 0.15
+    },
+    "eventfulness": {
+      "verbsStrong": ["signed", "ratified", "sanctioned", "suspended", "expelled", "deployed", "withdrew", "nationalized", "seized", "arrested"],
+      "verbsMedium": ["announced", "proposed", "negotiating", "talks", "met", "pledged", "warning", "advised"],
+      "strong": 1,
+      "medium": 0.6
+    },
+    "impactHints": {
+      "sovereign": ["sanctions", "sovereign", "currency", "visa policy", "defense pact", "security pact"],
+      "corporate": ["port", "pipeline", "refinery", "uranium", "oil", "gas"],
+      "max": 1
+    },
+    "recency": { "halfLifeHours": 24, "maxHours": 168 },
+    "corroboration": { "sameStoryWindowHours": 36, "boostPerDistinctDomain": 0.1, "maxBoost": 0.4 },
+    "thresholds": {
+      "minScoreForInclusion": 0.45,
+      "minScoreForTopDevelopments": 0.6,
+      "topK": 60
+    }
+  },
+  "topics": {
+    "france-africa": {
+      "officialDomains": ["gouv.fr", "elysee.fr", "diplomatie.gouv.fr", "au.int", "ecowas.int", "assemblee-nationale.fr"],
+      "sourceTiers": {
+        "tier1": { "domains": ["rfi.fr", "lemonde.fr", "jeuneafrique.com", "reuters.com", "apnews.com", "afp.com"] },
+        "tier2": { "domains": ["france24.com", "lefigaro.fr", "liberation.fr", "theafricareport.com", "bbc.com", "aljazeera.com"] },
+        "tier3": { "domains": ["allafrica.com", "businessdailyafrica.com", "dakaractu.com", "mediapart.fr"] }
+      },
+      "relevance": {
+        "mustHaveAny": ["france", "french"],
+        "africaSet": ["africa", "african", "mali", "niger", "burkina", "senegal", "gabon", "congo", "cameroon", "morocco", "algeria", "tunisia", "ethiopia", "chad", "sahel", "aes", "ecowas", "uemoa", "cemac"],
+        "themes": {
+          "diplomatic": ["diplomacy", "bilateral", "ambassador", "embassy", "sanction", "summit", "agreement", "treaty", "memorandum"],
+          "military": ["troops", "withdrawal", "deployment", "coup", "junta", "security pact", "counterterrorism", "wagner", "barkhane", "minusma", "aes"],
+          "economic": ["investment", "trade", "uranium", "orano", "rosatom", "totalenergies", "oil", "gas", "infrastructure", "aid", "imf", "world bank"],
+          "opinion": ["protest", "demonstration", "anti-french", "public opinion", "boycott", "visa"],
+          "climate": ["cop", "climate", "congo basin", "forest", "biodiversity", "finance"]
+        }
+      },
+      "impactHints": {
+        "sovereign": ["sanctions", "uranium", "visa policy", "defense pact", "security pact", "franc cfa"],
+        "corporate": ["orano", "totalenergies", "rosatom", "edf", "areva", "ports", "pipeline"]
+      },
+      "thresholds": {
+        "minScoreForInclusion": 0.5,
+        "minScoreForTopDevelopments": 0.65,
+        "topK": 60
+      }
+    },
+    "eu-tech-policy": {
+      "officialDomains": ["europa.eu", "ec.europa.eu", "edpb.europa.eu", "coe.int"],
+      "relevance": {
+        "mustHaveAny": ["eu", "european union", "european commission", "brussels"],
+        "themes": {
+          "policy": ["ai act", "dma", "dsa", "competition", "antitrust", "privacy", "gdpr", "standard", "consultation", "delegated act"],
+          "market": ["fine", "investigation", "probe", "merger", "state aid", "subsidy"]
+        }
+      },
+      "thresholds": {
+        "minScoreForInclusion": 0.55,
+        "minScoreForTopDevelopments": 0.7,
+        "topK": 40
+      }
+    }
+  }
+}

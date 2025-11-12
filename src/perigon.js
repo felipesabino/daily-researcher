@@ -1,6 +1,7 @@
 import pLimit from 'p-limit';
 import { Configuration, V1Api } from '@goperigon/perigon-ts';
 import { cleanSummary, getDateRange } from './util.js';
+import { loadPerigonCache, savePerigonCache } from './cache.js';
 
 const DEFAULT_EXCLUDES = ['facebook.com', 'youtube.com'];
 
@@ -14,6 +15,7 @@ export async function fetchTopicArticles(
     concurrency = 3,
     sourceGroup = 'news',
     excludeDomains = DEFAULT_EXCLUDES,
+    cacheDir,
   } = {}
 ) {
   if (!apiKey) {
@@ -42,6 +44,19 @@ export async function fetchTopicArticles(
           defaultSourceGroup: sourceGroup,
           defaultExcludeDomains: excludeDomains,
         });
+        const cached = await loadPerigonCache({
+          cacheDir,
+          topicId: topic.id,
+          label,
+          payload,
+        });
+        if (cached) {
+          const cachedArticles = cached.articles || [];
+          console.log(
+            `[perigon] "${label}" cache hit with ${cachedArticles.length} articles`
+          );
+          return cachedArticles.map(normalizeArticle);
+        }
         const resp = await client.searchArticles(payload);
         const { articles = [], numResults } = resp;
         console.log(
@@ -49,6 +64,13 @@ export async function fetchTopicArticles(
             typeof numResults === 'number' ? numResults : 'n/a'
           })`
         );
+        await savePerigonCache({
+          cacheDir,
+          topicId: topic.id,
+          label,
+          payload,
+          response: resp,
+        });
         return articles.map(normalizeArticle);
       } catch (error) {
         console.warn(

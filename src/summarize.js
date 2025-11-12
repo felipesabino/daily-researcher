@@ -2,10 +2,8 @@ import OpenAI from 'openai';
 
 const SYSTEM_PROMPT = `You are an analyst producing a concise daily brief.
 Use the researchPrompt and curated items to describe the most important developments (who/what/when/where/why) grouped by themes such as diplomacy, policy, military, economic, public opinion, or notable statements.
-Keep tone factual, compact, and ready for email delivery. Include Markdown links for cited sources.
-After the main brief, append a section titled exactly "What changed from previous brief (from <previousDateLabel>)" using the provided previousDateLabel value.
-Inside that section, summarize the diff arrays (New, Updated, Watchlist, ResolvedQuiet). For each non-empty category, list bullet points referencing titles and key changes; if empty, state "None".
-Use the diff metadata plus today/yesterday data to explain what changed.`;
+Items include signal scores; prioritize higher scores when structuring the brief.
+Keep tone factual, compact, newsletter-style, and include Markdown links for cited sources.`;
 
 export function createSummarizer({ apiKey, model = 'gpt-4o-mini' } = {}) {
   if (!apiKey) {
@@ -19,19 +17,16 @@ export function createSummarizer({ apiKey, model = 'gpt-4o-mini' } = {}) {
     windowLabel,
     topicId,
     topicName,
-    today,
-    yesterday,
-    previousDateLabel,
-    diff,
+    items,
+    metadata,
   }) {
     if (!researchPrompt) {
       throw new Error('Topic researchPrompt is required for summarization.');
     }
 
-    const todayItems = today?.items || [];
-    const yesterdayItems = yesterday?.items || [];
+    const todayItems = items || [];
 
-    if (!todayItems.length && !yesterdayItems.length) {
+    if (!todayItems.length) {
       return `No relevant articles were retrieved for the ${windowLabel}.`;
     }
 
@@ -40,16 +35,8 @@ export function createSummarizer({ apiKey, model = 'gpt-4o-mini' } = {}) {
       topicName,
       researchPrompt,
       window: windowLabel,
-      previousDateLabel: previousDateLabel || yesterday?.dateISO,
-      today: {
-        dateISO: today?.dateISO,
-        items: todayItems,
-      },
-      yesterday: {
-        dateISO: yesterday?.dateISO,
-        items: yesterdayItems,
-      },
-      diff,
+      items: todayItems,
+      metadata,
     };
 
     const response = await client.responses.create({

@@ -1,8 +1,12 @@
 export function getDateRange(days = 1) {
   const now = new Date();
-  const to = now.toISOString();
-  const fromTime = now.getTime() - Math.max(days, 1) * 24 * 60 * 60 * 1000;
-  const from = new Date(fromTime).toISOString();
+  const normalizedTo = new Date(
+    Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1, 0, 0, 0, 0)
+  );
+  const fromTime = normalizedTo.getTime() - Math.max(days, 1) * 24 * 60 * 60 * 1000;
+  const fromDate = new Date(fromTime);
+  const from = fromDate.toISOString();
+  const to = normalizedTo.toISOString();
   return { from, to };
 }
 
@@ -59,128 +63,4 @@ export function formatWindowLabel(days) {
   return `past ${n} days`;
 }
 
-export function normalizeTitle(title = '') {
-  return (title || '').toLowerCase().replace(/\W+/g, ' ').trim();
-}
-
-export function buildKey(item = {}) {
-  const titleKey = normalizeTitle(item.title);
-  if (titleKey) {
-    return titleKey;
-  }
-  return buildUrlKey(item.url);
-}
-
-export function buildKeyVariants(item = {}) {
-  const variants = [];
-  const titleKey = normalizeTitle(item.title);
-  if (titleKey) {
-    variants.push(`title:${titleKey}`);
-  }
-  const urlKey = buildUrlKey(item.url);
-  if (urlKey) {
-    variants.push(`url:${urlKey}`);
-  }
-  if (!variants.length) {
-    variants.push('');
-  }
-  return variants;
-}
-
-function buildUrlKey(rawUrl = '') {
-  const url = rawUrl?.trim();
-  if (!url) {
-    return '';
-  }
-  try {
-    const parsed = new URL(url);
-    return `${parsed.hostname}${parsed.pathname}`.toLowerCase();
-  } catch (error) {
-    return url.toLowerCase();
-  }
-}
-
-export function indexByKey(items = []) {
-  const map = new Map();
-  for (const item of items) {
-    for (const key of buildKeyVariants(item)) {
-      if (!key) {
-        continue;
-      }
-      if (!map.has(key)) {
-        map.set(key, []);
-      }
-      map.get(key).push(item);
-    }
-  }
-  return map;
-}
-
-export function isMaterialUpdate(previous = {}, current = {}) {
-  const prevTitle = normalizeTitle(previous.title);
-  const curTitle = normalizeTitle(current.title);
-  if (prevTitle && curTitle && prevTitle !== curTitle) {
-    return true;
-  }
-
-  const prevSummary = (previous.summary || '').trim();
-  const curSummary = (current.summary || '').trim();
-  const prevLen = prevSummary.length || 1;
-  const lenDiff = Math.abs(prevSummary.length - curSummary.length);
-  if (prevSummary && lenDiff / prevLen > 0.2) {
-    return true;
-  }
-
-  const prevTime = Date.parse(previous.publishedAt || previous.date || 0);
-  const curTime = Date.parse(current.publishedAt || current.date || 0);
-  if (
-    !Number.isNaN(prevTime) &&
-    !Number.isNaN(curTime) &&
-    curTime - prevTime >= 12 * 60 * 60 * 1000
-  ) {
-    return true;
-  }
-
-  return false;
-}
-
-export function computeDiff(todayItems = [], yesterdayItems = []) {
-  const yesterdayIndex = indexByKey(yesterdayItems);
-  const matchedPrevItems = new Set();
-  const New = [];
-  const Updated = [];
-  const WatchlistCandidates = [];
-
-  for (const current of todayItems) {
-    const keys = buildKeyVariants(current).filter(Boolean);
-    let previous;
-    for (const key of keys) {
-      const candidates = yesterdayIndex.get(key) || [];
-      previous = candidates.find((candidate) => !matchedPrevItems.has(candidate));
-      if (previous) {
-        matchedPrevItems.add(previous);
-        break;
-      }
-    }
-
-    if (!previous) {
-      New.push(current);
-      continue;
-    }
-
-    if (isMaterialUpdate(previous, current)) {
-      Updated.push({ previous, current });
-    } else {
-      WatchlistCandidates.push(current);
-    }
-  }
-
-  const ResolvedQuiet = yesterdayItems.filter((item) => !matchedPrevItems.has(item));
-
-  return {
-    New,
-    Updated,
-    Watchlist: WatchlistCandidates.slice(0, 5),
-    ResolvedQuiet: ResolvedQuiet.slice(0, 3),
-  };
-}
+// Diff helpers removed (no longer needed).
