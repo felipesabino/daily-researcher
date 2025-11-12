@@ -56,6 +56,7 @@ node cli.js --topics ./config/topics.json --data-dir ./data --days 1
 | `--max-items` | Max curated items per topic sent to OpenAI | `80` |
 | `--data-dir` | Directory for reading/writing archives | `./data` |
 | `--cache-dir` | Directory for caching Perigon API responses (defaults to `<dataDir>/.cache/perigon`) | derived |
+| `--dist-dir` | Directory for writing the static HTML report | `./dist` |
 | `--scoring-config` | Path to scoring configuration JSON | `./config/scoring.json` |
 | `--scoring-overrides` | Path to runtime overrides merged on top of the scoring config | `undefined` |
 | `--no-archive` | Skip writing today’s snapshot (useful during testing) | `archive=true` |
@@ -68,7 +69,7 @@ node cli.js --topics ./config/topics.json --data-dir ./data --days 1
    - Normalize, dedupe by URL/title, sort by recency, and trim to `max-items`.
    - Load the scoring policy (`global` merged with topic-specific overrides, plus any runtime overrides) and compute per-article signal scores.
    - Filter/sort the articles based on the scoring thresholds, keep the top-K signals, and send them (ordered by score) to OpenAI (`gpt-4o-mini` default) for a Markdown brief.
-   - Persist the full scored list (plus which items were selected) under `./data/YYYY-MM-DD/{topicId}.json` and save the rendered Markdown brief as `./data/YYYY-MM-DD/{topicId}.md` (unless `--no-archive`).
+   - Persist the full scored list (plus which items were selected) under `./data/YYYY-MM-DD/{topicId}.json`, save the rendered Markdown brief as `./data/YYYY-MM-DD/{topicId}.md`, and generate `./dist/YYYY-MM-DD/index.html` – a static newspaper-style page with toggles for prompts/sources (unless `--no-archive`).
 
 ### Topic-aware scoring config
 

@@ -2,8 +2,8 @@
   "topics": [
     {
       "id": "france-africa",
-      "destinationEmail": "you@example.com",
-      "researchPrompt": "Research the key political developments in the past 24 hours that may influence the relationship between African nations and France. Focus on diplomatic actions, policy changes, international agreements, elections, military operations, economic cooperation, public opinion shifts, or notable statements from political leaders. Identify emerging alliances, tensions, sanctions, protests, or negotiations that could reshape ties. Summarize the most significant events and explain short- and long-term impacts.",
+      "title": "France-Africa Relations Daily",
+      "researchPrompt": "Produce a daily brief on political developments in the past days that may influence the relationship between African nations and France. Focus on diplomatic actions, policy changes, international agreements, elections, military operations, economic cooperation, public opinion shifts, or notable statements from political leaders. Identify emerging alliances, tensions, sanctions, protests, or negotiations that could reshape ties. Also highlight anything that have possible impact on how logistics or how air cargo operations are conducted between France and African nations. Summarize the most significant events and explain short- and long-term impacts.",
       "queries": [
         {
           "name": "Diplomacy & Policy",
@@ -28,5 +28,56 @@
         }
       ]
     }
+    ,
+    {
+      "id": "dev-ai-tech",
+      "title": "Dev/AI Tech Daily",
+      "researchPrompt": "Produce a daily developer-focused brief on programming, software engineering, and applied AI. Prioritize: (1) model & API releases/changes; (2) SDK/runtime/dependency updates that can break code; (3) security advisories (CVE, 0-day, RCE) and supply-chain issues; (4) licensing or governance changes for popular OSS; (5) benchmarks and evals with practical developer impact; (6) notable GitHub launches/major PRs/roadmaps; (7) cloud & GPU/accelerator availability and pricing; (8) browser/JS runtime and WebGPU/WebAssembly updates; (9) package registry incidents (npm, PyPI); (10) community consensus/controversies surfaced on Hacker News and Reddit that could affect tech choices. Explain short-term (devs today/this sprint) and long-term (quarters) impact.",
+      "queries": [
+        {
+          "name": "HN & Programmer News",
+          "query": "(Hacker News OR Y Combinator OR 'Show HN' OR 'Ask HN' OR 'Tell HN' OR 'programmer news' OR 'developer blog') AND (release OR launch OR 'breaking change' OR deprecated OR benchmark OR roadmap OR migration)",
+          "lang": ["en"],
+          "topic": ["Tech", "Science", "Business"],
+          "pageSize": 50
+        },
+        {
+          "name": "Reddit Dev/AI",
+          "query": "(Reddit OR subreddit OR r/programming OR r/MachineLearning OR r/LocalLLaMA OR r/rust OR r/golang OR r/javascript OR r/node OR r/devops OR r/dataengineering OR r/pytorch) AND (release OR benchmark OR 'CVE-' OR 'security advisory' OR 'breaking change' OR 'pricing' OR 'licensing')",
+          "lang": ["en"],
+          "topic": ["Tech", "Science"],
+          "pageSize": 50
+        },
+        {
+          "name": "OSS & GitHub",
+          "query": "(GitHub OR 'open source' OR 'open-source' OR 'OSS' OR 'Apache-2.0' OR 'MIT license' OR 'GPL' OR 'AGPL' OR 'SSPL' OR 'license change') AND (release OR 'v*.*.*' OR roadmap OR RFC OR proposal OR fork OR upstream OR deprecate)",
+          "lang": ["en"],
+          "topic": ["Tech", "Science"],
+          "pageSize": 50
+        },
+        {
+          "name": "AI Models & Tooling",
+          "query": "(model OR 'large language model' OR LLM OR 'vector database' OR 'embedding' OR 'fine-tune' OR 'inference server' OR 'quantization' OR 'token pricing' OR 'API change') AND (release OR benchmark OR eval OR latency OR throughput OR pricing OR deprecate OR migration)",
+          "lang": ["en"],
+          "topic": ["Tech", "Science"],
+          "pageSize": 50
+        },
+        {
+          "name": "Security & Supply Chain",
+          "query": "('CVE-' OR '0-day' OR 'RCE' OR 'supply chain' OR 'typosquatting' OR 'malicious package' OR 'SBOM' OR 'sigstore' OR 'SLSA') AND (npm OR PyPI OR Maven OR crates.io OR Homebrew OR Docker Hub OR GitHub)",
+          "lang": ["en"],
+          "topic": ["Tech", "Science"],
+          "pageSize": 50
+        },
+        {
+          "name": "Runtimes, Browsers, GPUs",
+          "query": "(Node.js OR Deno OR Bun OR V8 OR SpiderMonkey OR WebKit OR Chrome OR Firefox OR Safari OR WebGPU OR WebAssembly OR CUDA OR ROCm OR Triton OR 'GPU pricing') AND (release OR deprecate OR 'breaking change' OR flag OR feature OR roadmap)",
+          "lang": ["en"],
+          "topic": ["Tech", "Science"],
+          "pageSize": 50
+        }
+      ]
+    }
   ]
 }
+

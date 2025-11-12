@@ -7,6 +7,7 @@ import { createSummarizer } from './summarize.js';
 import { saveToday } from './persistence.js';
 import { loadScoringConfig, deepMerge } from './scoring-config.js';
 import { scoreItems } from './scoring.js';
+import { renderHtmlReport } from './html-report.js';
 
 export async function runDailyResearcher(options = {}) {
   loadEnv();
@@ -19,6 +20,7 @@ export async function runDailyResearcher(options = {}) {
     maxItems = 80,
     dataDir = './data',
     cacheDir,
+    distDir = './dist',
     scoringConfigPath = './config/scoring.json',
     scoringOverridesPath,
     archive = true,
@@ -49,6 +51,7 @@ export async function runDailyResearcher(options = {}) {
   const windowLabel = formatWindowLabel(days);
   const todayISO = new Date().toISOString().slice(0, 10);
   const resolvedCacheDir = cacheDir || path.resolve(dataDir, '.cache', 'perigon');
+  const runResults = [];
 
   for (const topic of selectedTopics) {
     console.log(`\n[topic:${topic.id}] Fetching news for the ${windowLabel}...`);
@@ -125,6 +128,27 @@ export async function runDailyResearcher(options = {}) {
       } catch (error) {
         console.warn(`[topic:${topic.id}] Failed to archive items: ${error.message}`);
       }
+    }
+
+    runResults.push({
+      topicId: topic.id,
+      topicName: topic.name,
+      researchPrompt: topic.researchPrompt,
+      brief,
+      items: topItems,
+    });
+  }
+
+  if (runResults.length) {
+    try {
+      const htmlPath = await renderHtmlReport({
+        distDir,
+        dateISO: todayISO,
+        results: runResults,
+      });
+      console.log(`[report] Static HTML page saved to ${htmlPath}`);
+    } catch (error) {
+      console.warn(`[report] Failed to render HTML page: ${error.message}`);
     }
   }
 }

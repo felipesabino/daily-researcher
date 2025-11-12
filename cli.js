@@ -42,6 +42,11 @@ const argv = yargs(hideBin(process.argv))
     describe: 'Directory used to cache Perigon API responses',
     default: undefined,
   })
+  .option('dist-dir', {
+    type: 'string',
+    describe: 'Directory used to write the static HTML report',
+    default: './dist',
+  })
   .option('scoring-config', {
     type: 'string',
     describe: 'Path to scoring configuration JSON',
@@ -68,6 +73,7 @@ runDailyResearcher({
   maxItems: argv.maxItems,
   dataDir: argv.dataDir,
   cacheDir: argv.cacheDir,
+  distDir: argv.distDir,
   scoringConfigPath: argv.scoringConfig,
   scoringOverridesPath: argv.scoringOverrides,
   archive: argv.archive,

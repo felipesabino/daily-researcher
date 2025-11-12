@@ -70,19 +70,136 @@
         "topK": 60
       }
     },
-    "eu-tech-policy": {
-      "officialDomains": ["europa.eu", "ec.europa.eu", "edpb.europa.eu", "coe.int"],
-      "relevance": {
-        "mustHaveAny": ["eu", "european union", "european commission", "brussels"],
-        "themes": {
-          "policy": ["ai act", "dma", "dsa", "competition", "antitrust", "privacy", "gdpr", "standard", "consultation", "delegated act"],
-          "market": ["fine", "investigation", "probe", "merger", "state aid", "subsidy"]
-        }
-      },
+    "dev-ai-tech": {
       "thresholds": {
-        "minScoreForInclusion": 0.55,
-        "minScoreForTopDevelopments": 0.7,
-        "topK": 40
+        "minScoreForInclusion": 0.52,
+        "minScoreForTopDevelopments": 0.68,
+        "topK": 60
+      },
+
+      "weights": {
+        "sourceQuality": 0.18,
+        "eventfulness": 0.24,
+        "relevance": 0.22,
+        "recency": 0.16,
+        "corroboration": 0.10,
+        "officialdom": 0.05,
+        "impactHints": 0.05
+      },
+
+      "sourceTiers": {
+        "tier1": {
+          "score": 1.0,
+          "domains": [
+            "openai.com","ai.googleblog.com","deepmind.google","research.google",
+            "pytorch.org","tensorflow.org","huggingface.co","github.blog",
+            "engineering.atspotify.com","dropbox.tech","netflixtechblog.com",
+            "cloud.google.com","aws.amazon.com","azure.microsoft.com",
+            "meta.com","about.fb.com","anthropic.com","cohere.com",
+            "reuters.com","apnews.com","theverge.com","arstechnica.com"
+          ]
+        },
+        "tier2": {
+          "score": 0.75,
+          "domains": [
+            "blog.cloudflare.com","reddit.com","medium.com","news.ycombinator.com",
+            "hnrss.org","techcrunch.com","venturebeat.com","wired.com",
+            "semianalysis.com","stratechery.com","phoronix.com","tomshardware.com",
+            "blogs.nvidia.com","developer.nvidia.com","amd.com","intel.com",
+            "mozilla.org","webkit.org","chromium.org","v8.dev","deno.com","bun.sh"
+          ]
+        },
+        "tier3": {
+          "score": 0.6,
+          "domains": [
+            "kaggle.com","paperswithcode.com","huggingface.co/papers",
+            "docker.com","kubernetes.io","prometheus.io","grafana.com",
+            "ray.io","mlflow.org","modal.com","fly.io","supabase.com"
+          ]
+        },
+        "other": { "score": 0.45 }
+      },
+
+      "officialDomains": [
+        "nvd.nist.gov","cisa.gov","mitre.org","iana.org"
+      ],
+
+      "relevance": {
+        "mustHaveAny": [
+          "developer","programmer","runtime","sdk","api","cli","library","package",
+          "node","python","rust","go","javascript","typescript","cuda","rocm","webgpu",
+          "llm","embedding","inference","fine-tune","benchmark","latency","throughput"
+        ],
+        "africaSet": [],
+
+        "themes": {
+          "releases": [
+            "release","launched","v","rc","beta","stable","general availability",
+            "ga","preview","feature flag","migration","breaking change","deprecated"
+          ],
+          "security": [
+            "CVE-","0-day","RCE","sandbox escape","supply chain","typosquatting",
+            "malicious package","SBOM","SLSA","sigstore","advisory","patch"
+          ],
+          "ai-models": [
+            "model","checkpoint","weights","quantization","llama","mistral",
+            "training","fine-tuning","eval","benchmark","hallucination","safety"
+          ],
+          "infra": [
+            "GPU","H100","H200","A100","MI300","TPU","CUDA","ROCm","Triton",
+            "inference server","throughput","latency","serving","scaling","autoscaling"
+          ],
+          "ecosystem": [
+            "npm","pypi","maven","crates.io","homebrew","docker hub","registry",
+            "license","AGPL","GPL","Apache-2.0","MIT","SSPL","business source license"
+          ],
+          "runtimes": [
+            "Node.js","Deno","Bun","V8","SpiderMonkey","JavaScriptCore","WebAssembly",
+            "WebGPU","Chromium","Firefox","Safari","Chrome","TypeScript"
+          ],
+          "pricing": [
+            "pricing","token pricing","quota","rate limit","credits","discount",
+            "free tier","usage-based","egress","S3","bandwidth"
+          ],
+          "governance": [
+            "governance","policy","open source","fork","upstream","CLA","RFC","proposal"
+          ]
+        },
+
+        "themeBoost": 0.18
+      },
+
+      "eventfulness": {
+        "verbsStrong": [
+          "released","launched","shipped","merged","landed","backported","forked",
+          "deprecated","removed","broke","patched","fixed","hardened","rotated keys",
+          "rolled back","recalled","pulled"
+        ],
+        "verbsMedium": [
+          "announced","previewed","proposed","roadmap","flagged","advised",
+          "migrating","benchmarking","evaluated","tuned"
+        ],
+        "strong": 1.0,
+        "medium": 0.65
+      },
+
+      "impactHints": {
+        "sovereign": [
+          "export control","enforcement","dmca","copyright","patent","antitrust"
+        ],
+        "corporate": [
+          "breaking change","license change","CVE-","0-day","RCE","EOL","LTS",
+          "availability","SLA","SLO","token pricing","GPU price","quota"
+        ],
+        "max": 1.0
+      },
+
+      "recency": { "halfLifeHours": 20, "maxHours": 120 },
+
+      "corroboration": {
+        "sameStoryWindowHours": 24,
+        "boostPerDistinctDomain": 0.12,
+        "maxBoost": 0.48
       }
     }
   }
