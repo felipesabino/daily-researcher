@@ -136,6 +136,7 @@ function buildSearchPayload(
     size: size ?? pageSize ?? 50,
     sourceGroup: normalizeArray(sourceGroup),
     excludeSource: normalizeArray(excludeSource),
+    showReprints: false,
   };
 
   const normalizedLanguage = normalizeArray(language ?? lang);
