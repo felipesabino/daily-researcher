@@ -17,7 +17,7 @@ function hashPayload(payload) {
 function getCacheLocation({ cacheDir, topicId, label, hash }) {
   const safeTopic = sanitize(topicId);
   const safeLabel = sanitize(label);
-  const dir = path.resolve(cacheDir, safeTopic, safeLabel);
+  const dir = path.resolve(cacheDir, safeLabel, safeTopic);
   const file = path.join(dir, `${hash}.json`);
   return { dir, file };
 }

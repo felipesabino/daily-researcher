@@ -57,6 +57,7 @@ export async function runDailyResearcher(options = {}) {
         todayISO,
         days,
         cacheDir: resolvedCacheDir,
+        openAiApiKey,
       });
       articles.push(...items);
     }

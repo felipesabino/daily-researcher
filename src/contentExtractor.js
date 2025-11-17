@@ -1,5 +1,6 @@
 import got from 'got';
 import { load } from 'cheerio';
+import { loadCache, saveCache } from './cache.js';
 
 const BLOCKED_EXTENSIONS = [
   '.png',
@@ -18,8 +19,17 @@ const BLOCKED_EXTENSIONS = [
   '.rar',
 ];
 
-export async function fetchAndExtract(url) {
+export async function fetchAndExtract(url, { cacheDir, topicId = 'global', label = 'content' } = {}) {
   if (!url) return { content: '', skipReason: 'missing url' };
+  const cachePayload = { url };
+  try {
+    const cached = await loadCache({ cacheDir, topicId, label: `${label}-extract`, payload: cachePayload });
+    if (cached) {
+      return cached;
+    }
+  } catch (error) {
+    console.warn(`[content] cache read failed for ${url}: ${error.message}`);
+  }
   const nonText = isNonTextUrl(url);
   if (nonText.skip) {
     console.log(`[content] Skipping ${url} (${nonText.reason})`);
@@ -105,9 +115,17 @@ export async function fetchAndExtract(url) {
       return { content: '', skipReason: `Insufficient textual content (${meaningful.length} meaningful chars)`, mediaUrl: url };
     }
 
-    const truncated = compressed.slice(0, 1500);
+    const truncated = compressed.slice(0, 4000);
     console.log(`[content] Extracted ${truncated.length} chars from ${url}`);
-    return { content: truncated };
+    const record = { content: truncated };
+    await saveCache({
+      cacheDir,
+      topicId,
+      label: `${label}-extract`,
+      payload: cachePayload,
+      response: record,
+    });
+    return record;
   } catch (error) {
     console.warn(`[content] Failed to extract from ${url}: ${error.message || error}`);
     return { content: '', skipReason: error.message || 'fetch error', mediaUrl: url };

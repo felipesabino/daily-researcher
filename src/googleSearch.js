@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { loadCache, saveCache } from './cache.js';
 import { fetchAndExtract } from './contentExtractor.js';
+import { summarizeContent } from './articleSummary.js';
 
 const GOOGLE_ENDPOINT = 'https://www.googleapis.com/customsearch/v1';
 
-export async function searchGoogleForQuery(topicId, queryConfig = {}, { todayISO, days = 1, cacheDir } = {}) {
+export async function searchGoogleForQuery(topicId, queryConfig = {}, { todayISO, days = 1, cacheDir, openAiApiKey } = {}) {
   const apiKey = process.env.GOOGLE_SEARCH_API_KEY;
   const defaultCx = process.env.GOOGLE_SEARCH_CX_DEFAULT;
   if (!apiKey) {
@@ -32,7 +33,7 @@ export async function searchGoogleForQuery(topicId, queryConfig = {}, { todayISO
     const cached = await loadCache({ cacheDir, topicId, label, payload: cachePayload });
     if (cached?.items) {
       console.log(`[google] ${label} cache hit with ${cached.items.length} items`);
-      return normalizeItems(cached.items);
+      return normalizeItems(cached.items, { cacheDir, topicId, openAiApiKey, label });
     }
   } catch (error) {
     console.warn(`[google] cache read failed for ${label}: ${error.message}`);
@@ -43,7 +44,7 @@ export async function searchGoogleForQuery(topicId, queryConfig = {}, { todayISO
     const items = response.data?.items || [];
     console.log(`[google] ${label} returned ${items.length} items`);
     await saveCache({ cacheDir, topicId, label, payload: cachePayload, response: { items } });
-    return normalizeItems(items);
+    return normalizeItems(items, { cacheDir, topicId, openAiApiKey, label });
   } catch (error) {
     const msg = error.response?.data?.error?.message || error.message;
     console.warn(`[google] Query "${label}" failed: ${msg}`);
@@ -51,7 +52,7 @@ export async function searchGoogleForQuery(topicId, queryConfig = {}, { todayISO
   }
 }
 
-async function normalizeItems(items) {
+async function normalizeItems(items, { cacheDir, topicId, openAiApiKey, label }) {
   const results = [];
   for (const item of items) {
     const title = item.title || '';
@@ -65,7 +66,7 @@ async function normalizeItems(items) {
 
     if (!summary || summary.length < 500) {
       try {
-        const extracted = await fetchAndExtract(url);
+        const extracted = await fetchAndExtract(url, { cacheDir, topicId, label });
         if (extracted?.content) {
           summary = extracted.content;
           console.log(`[google] Fallback extraction used for ${url} (${summary.length} chars)`);
@@ -79,6 +80,23 @@ async function normalizeItems(items) {
         }
       } catch {
         // ignore extraction errors
+      }
+    }
+
+    if (summary && openAiApiKey) {
+      try {
+        const { summary: aiSummary } = await summarizeContent({
+          url,
+          content: summary,
+          cacheDir,
+          topicId,
+          apiKey: openAiApiKey,
+        });
+        if (aiSummary) {
+          summary = aiSummary;
+        }
+      } catch (error) {
+        console.warn(`[google] Article summary failed for ${url}: ${error.message}`);
       }
     }
 
