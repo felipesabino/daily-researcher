@@ -1,7 +1,7 @@
 {
   "name": "daily-researcher",
   "version": "1.0.0",
-  "description": "CLI tool that aggregates Perigon news results, summarizes with OpenAI, and stores daily briefs as Markdown.",
+  "description": "CLI tool that aggregates Google CSE news results, summarizes with OpenAI, and stores daily briefs as Markdown.",
   "type": "module",
   "main": "src/index.js",
   "bin": {
@@ -16,12 +16,12 @@
     "news",
     "cli",
     "openai",
-    "perigon"
+    "google"
   ],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@goperigon/perigon-ts": "^2.2.0",
+    "axios": "^1.6.8",
     "dotenv": "^17.2.3",
     "marked": "^17.0.0",
     "openai": "^6.8.1",

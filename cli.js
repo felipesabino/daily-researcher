@@ -19,7 +19,7 @@ const argv = yargs(hideBin(process.argv))
   .option('days', {
     alias: 'd',
     type: 'number',
-    describe: 'Lookback window in days for Perigon queries',
+    describe: 'Lookback window in days (applied to Google dateRestrict dN)',
     default: 1,
   })
   .option('dry-run', {
@@ -39,7 +39,7 @@ const argv = yargs(hideBin(process.argv))
   })
   .option('cache-dir', {
     type: 'string',
-    describe: 'Directory used to cache Perigon API responses',
+    describe: 'Directory used to cache Google Custom Search responses',
     default: undefined,
   })
   .option('dist-dir', {

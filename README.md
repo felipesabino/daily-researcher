@@ -1,11 +1,11 @@
-# France–Africa Daily Researcher
+# Daily Researcher
 
-CLI tool that aggregates Perigon news search results for configured research topics, summarizes them with OpenAI, and stores each daily brief (JSON + Markdown) under the `data/` directory.
+CLI tool that aggregates Google Custom Search results for configured research topics, summarizes them with OpenAI, and stores each daily brief (JSON + Markdown) under the `data/` directory.
 
 ## Requirements
 
 - Node.js 18+
-- Perigon API key
+- Google Custom Search API key + CX id (`GOOGLE_SEARCH_API_KEY`, `GOOGLE_SEARCH_CX_DEFAULT`)
 - OpenAI API key (GPT-4 class model recommended)
 
 ## Setup
@@ -51,11 +51,11 @@ node cli.js --topics ./config/topics.json --data-dir ./data --days 1
 |------|-------------|---------|
 | `--topics, -t` | Path to topics configuration JSON | `./config/topics.json` |
 | `--topic-id` | Only run the topic with this id | all topics |
-| `--days, -d` | Lookback window for Perigon queries | `1` |
+| `--days, -d` | Lookback window used to set Google dateRestrict (d{days}) | `1` |
 | `--dry-run` | Print the generated brief to stdout in addition to writing files | `false` |
 | `--max-items` | Max curated items per topic sent to OpenAI | `80` |
 | `--data-dir` | Directory for reading/writing archives | `./data` |
-| `--cache-dir` | Directory for caching Perigon API responses (defaults to `<dataDir>/.cache/perigon`) | derived |
+| `--cache-dir` | Directory for caching Google search responses (defaults to `<dataDir>/.cache/google`) | derived |
 | `--dist-dir` | Directory for writing the static HTML report | `./dist` |
 | `--scoring-config` | Path to scoring configuration JSON | `./config/scoring.json` |
 | `--scoring-overrides` | Path to runtime overrides merged on top of the scoring config | `undefined` |
@@ -65,7 +65,7 @@ node cli.js --topics ./config/topics.json --data-dir ./data --days 1
 
 1. Load `.env` + topics config.
 2. For each topic (or the selected one):
-   - Execute each Perigon query (parallelized w/ `p-limit`). Each request/response is cached locally, so reruns reuse cached results unless the payload changes.
+   - Execute each Google Custom Search query. Each request/response is cached locally, so reruns reuse cached results unless the payload changes.
    - Normalize, dedupe by URL/title, sort by recency, and trim to `max-items`.
    - Load the scoring policy (`global` merged with topic-specific overrides, plus any runtime overrides) and compute per-article signal scores.
    - Filter/sort the articles based on the scoring thresholds, keep the top-K signals, and send them (ordered by score) to OpenAI (`gpt-4o-mini` default) for a Markdown brief.
@@ -78,8 +78,8 @@ node cli.js --topics ./config/topics.json --data-dir ./data --days 1
 - Arrays merge with de-duplication (e.g., source domains), objects merge deeply (e.g., theme vocab).
 - Thresholds (`minScoreForInclusion`, `minScoreForTopDevelopments`, `topK`) control how many high-signal items make it into the brief.
 
-Errors during Perigon calls are logged per-query but do not stop the run; OpenAI or SMTP failures surface and exit non-zero so they can be retried.
+Errors during Google calls are logged per-query but do not stop the run; OpenAI failures surface and exit non-zero so they can be retried.
 
 ## Scheduling
 
-Once tested manually, invoke the CLI from cron, GitHub Actions, or another scheduler (ensure secrets are available in each environment). Persisting raw data under `./data/YYYY-MM-DD/<topicId>.json` can be added later for auditing or manual comparisons.
+Once tested manually, invoke the CLI from cron, GitHub Actions, or another scheduler (ensure secrets are available in each environment). Persisting raw data under `./data/<topicId>.json` helps with auditing or manual comparisons.

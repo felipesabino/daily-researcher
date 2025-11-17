@@ -7,24 +7,21 @@
       "queries": [
         {
           "name": "Diplomacy & Policy",
-          "query": "(France OR French) AND (Africa OR African OR Mali OR Niger OR Burkina Faso OR Chad OR Senegal OR Gabon OR Congo OR Morocco OR Algeria OR Tunisia OR Ethiopia) AND (diplomacy OR summit OR cooperation OR agreement OR embassy OR ambassador OR sanctions OR 'foreign policy')",
-          "lang": ["en", "fr"],
-          "category": ["Politics", "World"],
-          "pageSize": 50
+          "query": "(France OR French) (Africa OR African OR Mali OR Niger OR Burkina Faso OR Chad OR Senegal OR Gabon OR Congo OR Morocco OR Algeria OR Tunisia OR Ethiopia) (diplomacy OR summit OR cooperation OR agreement OR embassy OR ambassador OR sanctions OR \"foreign policy\")",
+          "num": 10,
+          "dateRestrict": "d7"
         },
         {
           "name": "Military & Security",
-          "query": "(France OR French) AND (Mali OR Niger OR Burkina Faso OR Chad) AND (Sahel OR 'military cooperation' OR 'troop withdrawal' OR 'security pact' OR 'counterterrorism' OR Wagner OR Barkhane)",
-          "lang": ["en", "fr"],
-          "category": ["Politics", "World"],
-          "pageSize": 50
+          "query": "(France OR French) (Mali OR Niger OR Burkina Faso OR Chad) (Sahel OR \"military cooperation\" OR \"troop withdrawal\" OR \"security pact\" OR counterterrorism OR Wagner OR Barkhane)",
+          "num": 10,
+          "dateRestrict": "d7"
         },
         {
           "name": "Economic & Energy",
-          "query": "(France OR French) AND (Africa OR African OR Niger OR Gabon OR Congo OR Senegal) AND (uranium OR Orano OR TotalEnergies OR investment OR 'trade deal' OR oil OR gas OR infrastructure OR 'development aid')",
-          "lang": ["en", "fr"],
-          "category": ["Business", "World"],
-          "pageSize": 50
+          "query": "(France OR French) (Africa OR African OR Niger OR Gabon OR Congo OR Senegal) (uranium OR Orano OR TotalEnergies OR investment OR \"trade deal\" OR oil OR gas OR infrastructure OR \"development aid\")",
+          "num": 10,
+          "dateRestrict": "d7"
         }
       ]
     }
@@ -36,48 +33,41 @@
       "queries": [
         {
           "name": "HN & Programmer News",
-          "query": "(Hacker News OR Y Combinator OR 'Show HN' OR 'Ask HN' OR 'Tell HN' OR 'programmer news' OR 'developer blog') AND (release OR launch OR 'breaking change' OR deprecated OR benchmark OR roadmap OR migration)",
-          "lang": ["en"],
-          "topic": ["Tech", "Science", "Business"],
-          "pageSize": 50
+          "query": "\"Hacker News\" OR \"Show HN\" OR \"Ask HN\" OR \"Tell HN\" OR \"programmer news\" OR \"developer blog\"",
+          "num": 10,
+          "dateRestrict": "d1"
         },
         {
           "name": "Reddit Dev/AI",
-          "query": "(Reddit OR subreddit OR r/programming OR r/MachineLearning OR r/LocalLLaMA OR r/rust OR r/golang OR r/javascript OR r/node OR r/devops OR r/dataengineering OR r/pytorch) AND (release OR benchmark OR 'CVE-' OR 'security advisory' OR 'breaking change' OR 'pricing' OR 'licensing')",
-          "lang": ["en"],
-          "topic": ["Tech", "Science"],
-          "pageSize": 50
+          "query": "site:reddit.com (\"r/programming\" OR \"r/MachineLearning\" OR \"r/LocalLLaMA\" OR \"r/rust\" OR \"r/golang\" OR \"r/javascript\" OR \"r/node\" OR \"r/devops\" OR \"r/dataengineering\" OR \"r/pytorch\") (release OR benchmark OR \"CVE-\" OR \"security advisory\" OR \"breaking change\" OR pricing OR licensing)",
+          "num": 10,
+          "dateRestrict": "d1"
         },
         {
           "name": "OSS & GitHub",
-          "query": "(GitHub OR 'open source' OR 'open-source' OR 'OSS' OR 'Apache-2.0' OR 'MIT license' OR 'GPL' OR 'AGPL' OR 'SSPL' OR 'license change') AND (release OR 'v*.*.*' OR roadmap OR RFC OR proposal OR fork OR upstream OR deprecate)",
-          "lang": ["en"],
-          "topic": ["Tech", "Science"],
-          "pageSize": 50
+          "query": "site:github.com (release OR v\"\"\" OR roadmap OR RFC OR proposal OR fork OR upstream OR deprecate) (\"open source\" OR \"MIT license\" OR \"Apache-2.0\" OR GPL OR AGPL OR SSPL)",
+          "num": 10,
+          "dateRestrict": "d1"
         },
         {
           "name": "AI Models & Tooling",
-          "query": "(model OR 'large language model' OR LLM OR 'vector database' OR 'embedding' OR 'fine-tune' OR 'inference server' OR 'quantization' OR 'token pricing' OR 'API change') AND (release OR benchmark OR eval OR latency OR throughput OR pricing OR deprecate OR migration)",
-          "lang": ["en"],
-          "topic": ["Tech", "Science"],
-          "pageSize": 50
+          "query": "(\"large language model\" OR LLM OR \"vector database\" OR embedding OR \"fine-tune\" OR \"inference server\" OR quantization OR \"token pricing\" OR \"API change\") (release OR benchmark OR eval OR latency OR throughput OR deprecate OR migration)",
+          "num": 10,
+          "dateRestrict": "d1"
         },
         {
           "name": "Security & Supply Chain",
-          "query": "('CVE-' OR '0-day' OR 'RCE' OR 'supply chain' OR 'typosquatting' OR 'malicious package' OR 'SBOM' OR 'sigstore' OR 'SLSA') AND (npm OR PyPI OR Maven OR crates.io OR Homebrew OR Docker Hub OR GitHub)",
-          "lang": ["en"],
-          "topic": ["Tech", "Science"],
-          "pageSize": 50
+          "query": "(\"CVE-\" OR \"0-day\" OR RCE OR \"supply chain\" OR typosquatting OR \"malicious package\" OR SBOM OR sigstore OR SLSA) (npm OR PyPI OR Maven OR \"crates.io\" OR Homebrew OR \"Docker Hub\" OR GitHub)",
+          "num": 10,
+          "dateRestrict": "d1"
         },
         {
           "name": "Runtimes, Browsers, GPUs",
-          "query": "(Node.js OR Deno OR Bun OR V8 OR SpiderMonkey OR WebKit OR Chrome OR Firefox OR Safari OR WebGPU OR WebAssembly OR CUDA OR ROCm OR Triton OR 'GPU pricing') AND (release OR deprecate OR 'breaking change' OR flag OR feature OR roadmap)",
-          "lang": ["en"],
-          "topic": ["Tech", "Science"],
-          "pageSize": 50
+          "query": "(Node.js OR Deno OR Bun OR V8 OR SpiderMonkey OR WebKit OR Chrome OR Firefox OR Safari OR WebGPU OR WebAssembly OR CUDA OR ROCm OR Triton) (release OR deprecate OR \"breaking change\" OR flag OR feature OR roadmap)",
+          "num": 10,
+          "dateRestrict": "d1"
         }
       ]
     }
   ]
 }
-

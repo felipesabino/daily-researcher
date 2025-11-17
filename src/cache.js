@@ -22,7 +22,7 @@ function getCacheLocation({ cacheDir, topicId, label, hash }) {
   return { dir, file };
 }
 
-export async function loadPerigonCache({ cacheDir, topicId, label, payload }) {
+export async function loadCache({ cacheDir, topicId, label, payload }) {
   if (!cacheDir) return null;
   const hash = hashPayload(payload);
   const { file } = getCacheLocation({ cacheDir, topicId, label, hash });
@@ -38,7 +38,7 @@ export async function loadPerigonCache({ cacheDir, topicId, label, payload }) {
   }
 }
 
-export async function savePerigonCache({ cacheDir, topicId, label, payload, response }) {
+export async function saveCache({ cacheDir, topicId, label, payload, response }) {
   if (!cacheDir) return;
   const hash = hashPayload(payload);
   const { dir, file } = getCacheLocation({ cacheDir, topicId, label, hash });

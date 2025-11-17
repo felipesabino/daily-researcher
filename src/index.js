@@ -1,13 +1,13 @@
 import fs from 'fs/promises';
 import path from 'path';
 import { loadEnv, loadTopics, filterTopics, DEFAULT_TOPICS_PATH } from './config.js';
-import { fetchTopicArticles } from './perigon.js';
 import { dedupeItems, formatWindowLabel, sortByPublishedAtDesc } from './util.js';
 import { createSummarizer } from './summarize.js';
 import { saveToday } from './persistence.js';
 import { loadScoringConfig, deepMerge } from './scoring-config.js';
 import { scoreItems } from './scoring.js';
 import { renderHtmlReport } from './html-report.js';
+import { searchGoogleForQuery } from './googleSearch.js';
 
 export async function runDailyResearcher(options = {}) {
   loadEnv();
@@ -36,11 +36,7 @@ export async function runDailyResearcher(options = {}) {
     );
   }
 
-  const perigonApiKey = process.env.PERIGON_API_KEY;
   const openAiApiKey = process.env.OPENAI_API_KEY;
-  if (!perigonApiKey) {
-    throw new Error('PERIGON_API_KEY is required.');
-  }
   if (!openAiApiKey) {
     throw new Error('OPENAI_API_KEY is required.');
   }
@@ -50,16 +46,20 @@ export async function runDailyResearcher(options = {}) {
 
   const windowLabel = formatWindowLabel(days);
   const todayISO = new Date().toISOString().slice(0, 10);
-  const resolvedCacheDir = cacheDir || path.resolve(dataDir, '.cache', 'perigon');
+  const resolvedCacheDir = cacheDir || path.resolve(dataDir, '.cache', 'google');
   const runResults = [];
 
   for (const topic of selectedTopics) {
     console.log(`\n[topic:${topic.id}] Fetching news for the ${windowLabel}...`);
-    const articles = await fetchTopicArticles(topic, {
-      apiKey: perigonApiKey,
-      days,
-      cacheDir: resolvedCacheDir,
-    });
+    const articles = [];
+    for (const query of topic.queries || []) {
+      const items = await searchGoogleForQuery(topic.id, query, {
+        todayISO,
+        days,
+        cacheDir: resolvedCacheDir,
+      });
+      articles.push(...items);
+    }
     let curated = dedupeItems(sortByPublishedAtDesc(articles));
 
     console.log(`[topic:${topic.id}] ${curated.length} curated articles.`);
