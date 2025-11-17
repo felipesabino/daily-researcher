@@ -22,17 +22,18 @@ function buildHtmlDocument(dateISO, results) {
   <title>Daily Researcher – ${escapeHtml(dateISO)}</title>
   <style>
     :root {
-      color-scheme: light dark;
-      --bg: #f7f5ef;
-      --fg: #1e1b16;
+      color-scheme: light;
+      --bg: #f5f7fb;
+      --fg: #121212;
       --card: #ffffff;
-      --border: #d8d2c4;
-      --accent: #2f4c7a;
+      --border: #e3e8ef;
+      --accent: #0f62fe;
+      --muted: #5f6b7a;
     }
     * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Georgia', 'Times New Roman', serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
       background: var(--bg);
       color: var(--fg);
       line-height: 1.6;
@@ -96,17 +97,17 @@ function buildHtmlDocument(dateISO, results) {
     main {
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1.25rem;
       padding: 1.5rem;
-      max-width: 900px;
-      margin: 0 auto;
+      max-width: 980px;
+      margin: 0 auto 2rem;
     }
     .topic-card {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.5rem;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.05);
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      box-shadow: 0 12px 30px rgba(15, 22, 36, 0.06);
       display: flex;
       flex-direction: column;
       gap: 1rem;
@@ -118,15 +119,15 @@ function buildHtmlDocument(dateISO, results) {
     }
     .topic-heading h2 {
       margin: 0;
-      font-size: 1.45rem;
-      letter-spacing: 0.06em;
+      font-size: 1.35rem;
+      letter-spacing: 0.04em;
     }
     .topic-id {
       margin: 0;
-      color: #6c6456;
+      color: var(--muted);
       font-size: 0.85rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
     }
     .toolbar {
       display: flex;
@@ -142,11 +143,12 @@ function buildHtmlDocument(dateISO, results) {
       border-radius: 999px;
       font-size: 0.85rem;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: background 0.2s, box-shadow 0.2s;
     }
     button.toggle:hover,
     button.toggle[aria-expanded="true"] {
-      background: #eef2fb;
+      background: #eef3ff;
+      box-shadow: 0 4px 12px rgba(15, 98, 254, 0.15);
     }
     .topic-body {
       display: grid;
@@ -164,21 +166,25 @@ function buildHtmlDocument(dateISO, results) {
     }
     .prompt-text {
       white-space: pre-wrap;
-      font-family: 'Georgia', serif;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
       font-size: 0.95rem;
       margin: 0;
+      color: var(--muted);
     }
     .brief-body {
-      background: #fcfbf7;
-      border-left: 4px solid var(--border);
-      padding: 0.9rem 1.1rem;
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
       font-size: 0.97rem;
+      line-height: 1.5;
     }
     .brief-body h1,
     .brief-body h2,
     .brief-body h3,
     .brief-body h4 {
-      font-family: 'Playfair Display', 'Georgia', serif;
+      font-family: 'Inter', 'Segoe UI', sans-serif;
+      margin-top: 0.4rem;
     }
     .sources-panel {
       border-left: 1px dashed var(--border);

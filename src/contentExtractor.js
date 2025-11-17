@@ -115,7 +115,7 @@ export async function fetchAndExtract(url, { cacheDir, topicId = 'global', label
       return { content: '', skipReason: `Insufficient textual content (${meaningful.length} meaningful chars)`, mediaUrl: url };
     }
 
-    const truncated = compressed.slice(0, 4000);
+    const truncated = compressed.slice(0, 10000);
     console.log(`[content] Extracted ${truncated.length} chars from ${url}`);
     const record = { content: truncated };
     await saveCache({

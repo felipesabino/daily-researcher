@@ -2,7 +2,7 @@ import crypto from 'crypto';
 import OpenAI from 'openai';
 import { loadCache, saveCache } from './cache.js';
 
-const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-4o-mini';
+const DEFAULT_MODEL = process.env.OPENAI_MODEL || 'gpt-5-nano';
 const SYSTEM_PROMPT = `You are a news assistant. Given article text, produce a concise summary (3-5 sentences) capturing who/what/when/where/why and key impacts. Keep it factual and avoid speculation.`;
 
 export async function summarizeContent({ url, content, cacheDir, topicId = 'global', model = DEFAULT_MODEL, apiKey }) {
