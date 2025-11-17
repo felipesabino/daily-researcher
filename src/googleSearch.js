@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { loadCache, saveCache } from './cache.js';
+import { fetchAndExtract } from './contentExtractor.js';
 
 const GOOGLE_ENDPOINT = 'https://www.googleapis.com/customsearch/v1';
 
@@ -50,15 +51,36 @@ export async function searchGoogleForQuery(topicId, queryConfig = {}, { todayISO
   }
 }
 
-function normalizeItems(items) {
-  return items.map((item) => {
+async function normalizeItems(items) {
+  const results = [];
+  for (const item of items) {
     const title = item.title || '';
-    const summary = item.snippet || item.htmlSnippet || '';
     const url = item.link || '';
     const source = item.displayLink || '';
     const publishedAt = extractPublishedAt(item);
-    return { title, summary, url, source, publishedAt };
-  });
+    let summary = item.snippet || item.htmlSnippet || '';
+    let mediaType;
+    let mediaUrl;
+    let skipReason;
+
+    if (!summary || summary.length < 120) {
+      try {
+        const extracted = await fetchAndExtract(url);
+        if (extracted?.content) {
+          summary = extracted.content;
+        } else {
+          mediaType = extracted?.mediaType;
+          mediaUrl = extracted?.mediaUrl;
+          skipReason = extracted?.skipReason;
+        }
+      } catch {
+        // ignore extraction errors
+      }
+    }
+
+    results.push({ title, summary, url, source, publishedAt, mediaType, mediaUrl, skipReason });
+  }
+  return results;
 }
 
 function extractPublishedAt(item) {

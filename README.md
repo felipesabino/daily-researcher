@@ -10,7 +10,7 @@ CLI tool that aggregates Google Custom Search results for configured research to
 
 ## Setup
 
-1. Install dependencies:
+1. Install dependencies: 
 
    ```bash
    npm install
