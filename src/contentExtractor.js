@@ -22,6 +22,7 @@ export async function fetchAndExtract(url) {
   if (!url) return { content: '', skipReason: 'missing url' };
   const nonText = isNonTextUrl(url);
   if (nonText.skip) {
+    console.log(`[content] Skipping ${url} (${nonText.reason})`);
     return {
       content: '',
       skipReason: nonText.reason,
@@ -45,6 +46,7 @@ export async function fetchAndExtract(url) {
     });
     const contentType = response.headers['content-type'] || '';
     if (isBinaryContentType(contentType)) {
+      console.log(`[content] Skipping ${url} due to content-type ${contentType}`);
       return {
         content: '',
         skipReason: `Non-text content type: ${contentType}`,
@@ -92,18 +94,22 @@ export async function fetchAndExtract(url) {
     }
 
     if (content.length < 50) {
+      console.log(`[content] ${url} insufficient text (${content.length} chars)`);
       return { content: '', skipReason: `Insufficient text content (${content.length} chars)`, mediaUrl: url };
     }
 
     const compressed = compressWhitespace(content);
     const meaningful = compressed.replace(/[\s\n\r\t.,;:!?()[\]{}'"\/\\<>+\-=_*&^%$#@~`|]/g, '');
     if (meaningful.length < 50) {
+      console.log(`[content] ${url} lacks meaningful text (${meaningful.length} chars)`);
       return { content: '', skipReason: `Insufficient textual content (${meaningful.length} meaningful chars)`, mediaUrl: url };
     }
 
     const truncated = compressed.slice(0, 1500);
+    console.log(`[content] Extracted ${truncated.length} chars from ${url}`);
     return { content: truncated };
   } catch (error) {
+    console.warn(`[content] Failed to extract from ${url}: ${error.message || error}`);
     return { content: '', skipReason: error.message || 'fetch error', mediaUrl: url };
   }
 }

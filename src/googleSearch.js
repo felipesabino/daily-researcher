@@ -63,15 +63,19 @@ async function normalizeItems(items) {
     let mediaUrl;
     let skipReason;
 
-    if (!summary || summary.length < 120) {
+    if (!summary || summary.length < 500) {
       try {
         const extracted = await fetchAndExtract(url);
         if (extracted?.content) {
           summary = extracted.content;
+          console.log(`[google] Fallback extraction used for ${url} (${summary.length} chars)`);
         } else {
           mediaType = extracted?.mediaType;
           mediaUrl = extracted?.mediaUrl;
           skipReason = extracted?.skipReason;
+          if (skipReason) {
+            console.log(`[google] Extraction skipped for ${url}: ${skipReason}`);
+          }
         }
       } catch {
         // ignore extraction errors
