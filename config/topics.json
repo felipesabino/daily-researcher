@@ -3,56 +3,49 @@
     {
       "id": "france-africa",
       "title": "France-Africa Relations Daily",
-      "researchPrompt": "Produce a daily brief on political developments in the past days that may influence the relationship between African nations and France. Focus on diplomatic actions, policy changes, international agreements, elections, military operations, economic cooperation, public opinion shifts, or notable statements from political leaders. Identify emerging alliances, tensions, sanctions, protests, or negotiations that could reshape ties. Also highlight anything that have possible impact on how logistics or how air cargo operations are conducted between France and African nations. Summarize the most significant events and explain short- and long-term impacts.",
+      "researchPrompt": "Produce a daily analytical brief on developments in the past days that may influence the relationship between African nations and France. Focus on: (1) diplomatic actions, policy changes, international agreements, elections, military operations, economic cooperation, public opinion shifts, or notable statements from political leaders; (2) issues that can affect supply chains, trade flows, port and airport operations, air cargo capacity, and logistics between France and African countries; (3) airline and aviation news involving Air France, CMA CGM Air Cargo, and other carriers operating between France and Africa that may impact Air France’s network, strategy, or profitability. For each major item, clearly describe what happened, the main actors involved (states, companies, institutions), the underlying causes or triggers, and the potential operational, financial, and reputational impacts in the short term (coming weeks) and long term (6–24 months). Perform a sentiment analysis for each major event and for the overall situation, classifying them as positive, negative, or mixed from the perspective of France–Africa relations and the air-cargo/supply-chain ecosystem.",
       "queries": [
         {
           "name": "Diplomacy & Policy",
-          "query": "(France OR French) (Africa OR African OR Mali OR Niger OR Burkina Faso OR Chad OR Senegal OR Gabon OR Congo OR Morocco OR Algeria OR Tunisia OR Ethiopia) (diplomacy OR summit OR cooperation OR agreement OR embassy OR ambassador OR sanctions OR \"foreign policy\")",
+          "query": "(France OR French) (Africa OR African OR Mali OR Niger OR Burkina Faso OR Chad OR Senegal OR Gabon OR Congo OR Morocco OR Algeria OR Tunisia OR Ethiopia) (diplomacy OR summit OR cooperation OR agreement OR embassy OR ambassador OR sanctions OR \"foreign policy\" OR \"bilateral relations\")",
           "num": 10,
           "dateRestrict": "d7"
         },
         {
           "name": "Military & Security",
-          "query": "(France OR French) (Mali OR Niger OR Burkina Faso OR Chad) (Sahel OR \"military cooperation\" OR \"troop withdrawal\" OR \"security pact\" OR counterterrorism OR Wagner OR Barkhane)",
+          "query": "(France OR French) (Mali OR Niger OR Burkina Faso OR Chad OR Sahel OR Africa OR African) (\"military cooperation\" OR \"troop withdrawal\" OR \"security pact\" OR counterterrorism OR Wagner OR Barkhane OR junta OR coup)",
           "num": 10,
           "dateRestrict": "d7"
         },
         {
-          "name": "Economic & Energy",
-          "query": "(France OR French) (Africa OR African OR Niger OR Gabon OR Congo OR Senegal) (uranium OR Orano OR TotalEnergies OR investment OR \"trade deal\" OR oil OR gas OR infrastructure OR \"development aid\")",
+          "name": "Economic, Energy & Logistics",
+          "query": "(France OR French) (Africa OR African OR Niger OR Gabon OR Congo OR Senegal OR Morocco OR Algeria OR Tunisia OR Ethiopia) (uranium OR Orano OR TotalEnergies OR investment OR \"trade deal\" OR oil OR gas OR infrastructure OR \"development aid\" OR logistics OR \"supply chain\" OR \"air cargo\" OR \"air freight\" OR port OR harbor OR \"shipping line\" OR \"CMA CGM\")",
           "num": 10,
+          "dateRestrict": "d7"
+        },
+        {
+          "name": "Aviation & Air Cargo",
+          "query": "(\"Air France\" OR \"CMA CGM Air Cargo\" OR \"cargo airline\" OR \"air cargo\" OR \"air freight\" OR \"belly cargo\" OR \"freighter\" OR \"air route\" OR \"air service agreement\") (Africa OR African OR Mali OR Niger OR Burkina Faso OR Chad OR Senegal OR Gabon OR Congo OR Morocco OR Algeria OR Tunisia OR Ethiopia) (France OR French)",
+          "num": 15,
           "dateRestrict": "d7"
         }
       ]
-    }
-    ,
+    },
     {
       "id": "dev-ai-tech",
       "title": "Dev/AI Tech Daily",
-      "researchPrompt": "Produce a daily developer-focused brief on programming, software engineering, and applied AI. Prioritize: (1) model & API releases/changes; (2) SDK/runtime/dependency updates that can break code; (3) security advisories (CVE, 0-day, RCE) and supply-chain issues; (4) licensing or governance changes for popular OSS; (5) benchmarks and evals with practical developer impact; (6) notable GitHub launches/major PRs/roadmaps; (7) cloud & GPU/accelerator availability and pricing; (8) browser/JS runtime and WebGPU/WebAssembly updates; (9) package registry incidents (npm, PyPI); (10) community consensus/controversies surfaced on Hacker News and Reddit that could affect tech choices. Explain short-term (devs today/this sprint) and long-term (quarters) impact.",
+      "researchPrompt": "Produce a concise, newsletter-style daily brief on notable developments in software, artificial intelligence, and the wider technology industry over the past day. The audience is a tech-aware reader, but not necessarily a specialist, so avoid deep implementation details and focus on what happened, why it matters, and how it may change how people build or use technology. Cover, when relevant: major AI and model announcements, significant product or API changes from large tech companies and popular developer tools, notable security incidents or outages, shifts in technology policy or regulation, and visible trends or debates emerging in developer communities such as Hacker News and Reddit. For each major story, clearly describe the core event, the key actors involved (companies, projects, regulators, communities), and the likely practical impact in the short term (coming days or weeks) and the longer term (months or years). Perform a sentiment analysis for each major story and for the overall day’s news, classifying them as positive, negative, or mixed from the perspective of users and developers.",
       "queries": [
         {
           "name": "HN & Programmer News",
           "query": "\"Hacker News\" OR \"Show HN\" OR \"Ask HN\" OR \"Tell HN\" OR \"programmer news\" OR \"developer blog\"",
-          "num": 10,
+          "num": 30,
           "dateRestrict": "d1"
         },
         {
           "name": "Reddit Dev/AI",
-          "query": "site:reddit.com (\"r/programming\" OR \"r/MachineLearning\" OR \"r/LocalLLaMA\" OR \"r/rust\" OR \"r/golang\" OR \"r/javascript\" OR \"r/node\" OR \"r/devops\" OR \"r/dataengineering\" OR \"r/pytorch\") (release OR benchmark OR \"CVE-\" OR \"security advisory\" OR \"breaking change\" OR pricing OR licensing)",
-          "num": 10,
-          "dateRestrict": "d1"
-        },
-        {
-          "name": "OSS & GitHub",
-          "query": "site:github.com (release OR v\"\"\" OR roadmap OR RFC OR proposal OR fork OR upstream OR deprecate) (\"open source\" OR \"MIT license\" OR \"Apache-2.0\" OR GPL OR AGPL OR SSPL)",
-          "num": 10,
-          "dateRestrict": "d1"
-        },
-        {
-          "name": "AI Models & Tooling",
-          "query": "(\"large language model\" OR LLM OR \"vector database\" OR embedding OR \"fine-tune\" OR \"inference server\" OR quantization OR \"token pricing\" OR \"API change\") (release OR benchmark OR eval OR latency OR throughput OR deprecate OR migration)",
-          "num": 10,
+          "query": "site:reddit.com (\"r/programming\" OR \"r/MachineLearning\" OR \"r/LocalLLaMA\" OR \"r/rust\" OR \"r/golang\" OR \"r/javascript\" OR \"r/node\" OR \"r/devops\" OR \"r/dataengineering\" OR \"r/singularity\")",
+          "num": 50,
           "dateRestrict": "d1"
         },
         {
